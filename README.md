@@ -1,44 +1,114 @@
+# GITT — Gestión de Inventario de Talleres Tecnológicos
 
-# GITT System
+Aplicación web para administrar los recursos tecnológicos de los talleres de la Facultad de Ingeniería en Sistemas, Electrónica e Industrial (FISEI) de la Universidad Técnica de Ambato (UTA). GITT centraliza el inventario, los préstamos y la información de ubicación y custodia de los bienes.
 
-GITT is an inventory management system for the Technological Workshops of FISEI (Faculty of Systems, Electronics and Industrial Engineering) that allows equipment registration and management using barcodes.
+## Funcionalidades
 
-## Prerequisites
+- Registro, consulta y edición de equipos e ítems de inventario, con información técnica y administrativa.
+- Organización del inventario por categorías, tipos, materiales, colores, estados, condiciones y ubicaciones.
+- Búsqueda y flujo de trabajo apoyados por lectura de códigos.
+- Gestión de préstamos y devoluciones.
+- Administración de usuarios y permisos por rol.
+- Generación de reportes en PDF.
 
-Before you begin, ensure you have the following installed on your system:
-- Node.js (version 20.18.0)
-- npm (usually comes with Node.js)
+## Tecnologías
 
-## Installation
+- [Next.js 15](https://nextjs.org/) con App Router y [React 19](https://react.dev/)
+- [TypeScript](https://www.typescriptlang.org/)
+- [Tailwind CSS](https://tailwindcss.com/) y componentes basados en Radix UI
+- Axios para la comunicación con la API
+- React Hook Form y Zod para formularios y validación
 
-1. Clone this repository to your local machine.
-2. Navigate to the project directory in your terminal.
-3. Install the project dependencies:
+## Requisitos
+
+- Node.js 20.18 o posterior
+- npm
+- Acceso a la API de GITT
+
+## Configuración local
+
+1. Clona el repositorio y entra en el directorio del proyecto:
+
+   ```bash
+   git clone <URL_DEL_REPOSITORIO>
+   cd <DIRECTORIO_DEL_PROYECTO>
+   ```
+
+2. Instala las dependencias:
+
+   ```bash
+   npm install
+   ```
+
+3. Crea un archivo `.env.local` en la raíz del proyecto y configura la URL base de la API:
+
+   ```dotenv
+   NEXT_PUBLIC_API_URL=https://<HOST_DE_LA_API>
+   ```
+
+   La aplicación usa esta variable para las solicitudes al backend. En despliegues con Docker, el Dockerfile también declara `NEXT_PUBLIC_API_URLIMAGE` como argumento de build para la URL de imágenes.
+
+4. Inicia el servidor de desarrollo:
+
+   ```bash
+   npm run dev
+   ```
+
+   Abre [http://localhost:3001](http://localhost:3001).
+
+## Comandos
+
+| Comando | Descripción |
+| --- | --- |
+| `npm run dev` | Inicia Next.js en modo desarrollo en el puerto 3001. |
+| `npm run build` | Genera la compilación de producción. |
+| `npm run start` | Sirve la compilación de producción (puerto 3000 por defecto). |
+| `npm run lint` | Ejecuta el script de lint definido en `package.json`. |
+
+## Estructura del proyecto
+
+```text
+app/          Rutas, layouts y endpoints internos de Next.js
+components/   Componentes de interfaz compartidos
+config/       Configuración de la aplicación
+core/         Infraestructura HTTP y utilidades centrales
+features/     Módulos funcionales organizados por dominio
+  auth/       Autenticación
+  inventory/  Inventario y artículos
+  loans/      Préstamos y devoluciones
+  reports/    Reportes y exportación PDF
+  users/      Usuarios
+shared/       Componentes, datos e interfaces compartidos
+public/       Recursos estáticos
+```
+
+## Autenticación y acceso
+
+La sesión se basa en un token JWT almacenado en una cookie `auth_token`. El middleware protege las rutas de la aplicación y aplica las restricciones por rol configuradas en `shared/data/user-routes.ts`. Se requiere una cuenta habilitada en el servicio de backend para acceder al panel.
+
+## Docker
+
+El repositorio incluye `Dockerfile.frontend`. La URL de la API se puede pasar como argumento de compilación:
 
 ```bash
-npm install
+docker build -f Dockerfile.frontend \
+  --build-arg NEXT_PUBLIC_API_URL=https://<HOST_DE_LA_API> \
+  -t gitt-frontend .
 ```
 
-## Environment Configuration
-
-Create a `.env` file in the root directory of the project with the following content:
-
-```
-NEXT_PUBLIC_API_URL=YOUR_API_KEY
-```
-
-Replace `YOUR_API_KEY` with your actual API key.
-
-## Development
-
-To start the development server:
+Inicia el contenedor publicando el puerto que expone la imagen:
 
 ```bash
-npm run dev
+docker run --rm -p 3000:3000 gitt-frontend
 ```
 
-The application will be available at [http://localhost:3000](http://localhost:3000). The page will automatically reload if you make changes to the code.
+## Contribuciones
 
-## Additional Information
+1. Crea una rama para tu cambio.
+2. Mantén los cambios alineados con la organización por módulos de `features/`.
+3. Antes de enviar una contribución, ejecuta la compilación y revisa los cambios localmente.
+4. Abre un pull request con un resumen y los pasos para verificarlo.
 
-For more information about Next.js, check out the [Next.js Documentation](https://nextjs.org/docs).
+## Licencia
+
+No se especifica una licencia en este repositorio. Consulta con el equipo responsable antes de reutilizar o distribuir el código.
